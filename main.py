@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive Religion Map</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #f8f8f8;
+  }
+  svg {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    cursor: grab;
+  }
+  .tooltip {
+    position: absolute;
+    background: rgba(255,255,255,0.9);
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    pointer-events: none;
+  }
+  .controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255,255,255,0.9);
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-family: sans-serif;
+    font-size: 14px;
+  }
+  .controls label {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="controls"></div>
+<div class="tooltip" style="opacity:0;"></div>
+
+<script>
+// === CONFIGURATION ===
+const bgWidth = 3840;
+const bgHeight = 1918;
+
+// === YOUR CUSTOM COLORS ===
+const colorMap = {
+  "katholiek": "#1f77b4",
+  "niet gelovig": "#ff7f0e",
+  "niet geintereseerd": "#2ca02c",
+  "iets": "#d62728",
+  "default": "#cccccc"
+};
+
+// === SETUP SVG ===
+const svg = d3.select("body").append("svg")
+  .attr("viewBox", [0, 0, bgWidth, bgHeight]);
+
+const g = svg.append("g");
+
+// Add background image
+g.append("image")
+  .attr("xlink:href", "kepler.png")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", bgWidth)
+  .attr("height", bgHeight);
+
+// === TOOLTIP ===
+const tooltip = d3.select(".tooltip");
+
+// === LOAD CSV DATA ===
+d3.csv("godsdienst_pixels.csv").then(data => {
+  // Clean and parse
+  data.forEach(d => {
+    d.x = +d.x;
+    d.y = +d.y;
+    d.religion = d.religion.trim().toLowerCase();
+    d.address = d.address.trim();
+  });
+
+  // Filter valid points
+  data = data.filter(d =>
+    !isNaN(d.x) && !isNaN(d.y) &&
+    d.x >= 0 && d.x <= bgWidth &&
+    d.y >= 0 && d.y <= bgHeight
+  );
+
+  // === CREATE CHECKBOX CONTROLS ===
+  const religions = [...new Set(data.map(d => d.religion))];
+  const controls = d3.select(".controls");
+
+  religions.forEach(r => {
+    const div = controls.append("label");
+    div.append("input")
+      .attr("type", "checkbox")
+      .attr("checked", true)
+      .attr("value", r)
+      .on("change", update);
+    div.append("span").text(" " + r);
+  });
+
+  // === BUILD VORONOI ===
+  const delaunay = d3.Delaunay.from(data, d => d.x, d => d.y);
+  const voronoi = delaunay.voronoi([0, 0, bgWidth, bgHeight]);
+
+  // Safe rendering
+  function safeRenderCell(i) {
+    try {
+      const path = voronoi.renderCell(i);
+      if (!path || path.includes("NaN")) return null;
+      return path;
+    } catch {
+      return null;
+    }
+  }
+
+  // === DRAW ELEMENTS ===
+  const cells = g.selectAll("path")
+    .data(data)
+    .join("path")
+    .attr("d", (_, i) => safeRenderCell(i))
+    .attr("fill", d => colorMap[d.religion] || colorMap["default"])
+    .attr("fill-opacity", 0.5)
+    .attr("stroke", "#333")
+    .attr("stroke-width", 0.3)
+    .on("mousemove", (event, d) => {
+      tooltip.style("opacity", 1)
+        .style("left", (event.pageX + 12) + "px")
+        .style("top", (event.pageY - 10) + "px")
+        .html(`<b>${d.religion}</b><br>${d.address}`);
+    })
+    .on("mouseout", () => tooltip.style("opacity", 0));
+
+  const points = g.selectAll("circle")
+    .data(data)
+    .join("circle")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", 6)
+    .attr("fill", d => colorMap[d.religion] || colorMap["default"])
+    .attr("stroke", "#000")
+    .attr("stroke-width", 0.5);
+
+  // === UPDATE FUNCTION ===
+  function update() {
+    const active = new Set(
+      controls.selectAll("input:checked").nodes().map(d => d.value)
+    );
+
+    cells.attr("display", d => active.has(d.religion) ? null : "none");
+    points.attr("display", d => active.has(d.religion) ? null : "none");
+  }
+
+  update(); // initial render
+});
+
+// === ZOOM & PAN ===
+const zoom = d3.zoom()
+  .scaleExtent([1, 6]) // prevent zooming out too far (no white borders)
+  .translateExtent([[0, 0], [bgWidth, bgHeight]]) // limit panning area
+  .on("zoom", (event) => {
+    const t = event.transform;
+    g.attr("transform", t);
+  });
+
+svg.call(zoom);
+</script>
+
+</body>
+</html>

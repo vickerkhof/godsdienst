@@ -9,21 +9,30 @@ html, body { margin:0; padding:0; overflow:hidden; background:#f8f8f8; }
 svg { width:100vw; height:100vh; display:block; cursor:grab; }
 .tooltip { position:absolute; background:rgba(255,255,255,0.9); padding:5px 8px; border-radius:5px; font-size:13px; border:1px solid #ccc; pointer-events:none; }
 .controls { position:absolute; top:10px; left:10px; background:rgba(255,255,255,0.9); padding:10px 15px; border-radius:10px; font-family:sans-serif; font-size:14px; pointer-events:auto; cursor:default; z-index:10; }
-.controls label { display:block; }
+.controls label { display:block; margin-bottom:4px; }
+.controls .sub-options { margin-top:4px; padding-left:16px; }
 </style>
 </head>
-<body> 
+<body>
 
 <div class="controls">
-  <label>
-    Mode:
-    <select id="modeSelect">
-      <option value="religion">Religion</option>
-      <option value="religious">Religious</option>
-      <option value="regularly">Regularly</option>
-    </select>
-  </label>
+  <div>
+    <strong>Mode:</strong>
+    <div class="mode-option">
+      <label><input type="radio" name="mode" value="religion" checked> Religion</label>
+      <div class="sub-options"></div>
+    </div>
+    <div class="mode-option">
+      <label><input type="radio" name="mode" value="religious"> Religious</label>
+      <div class="sub-options"></div>
+    </div>
+    <div class="mode-option">
+      <label><input type="radio" name="mode" value="regularly"> Regularly</label>
+      <div class="sub-options"></div>
+    </div>
+  </div>
 </div>
+
 <div class="tooltip" style="opacity:0;"></div>
 
 <script>
@@ -43,9 +52,7 @@ g.append("image").attr("xlink:href","kepler.png").attr("x",0).attr("y",0).attr("
 
 const tooltip = d3.select(".tooltip");
 
-d3.csv("godsdienst_pixels.csv", d => {
-    // Normalize keys and values
-    console.log(d);
+d3.csv("new.csv", d => {
     const cleaned = {};
     Object.keys(d).forEach(key => {
       const cleanKey = key.trim().toLowerCase();
@@ -87,21 +94,35 @@ d3.csv("godsdienst_pixels.csv", d => {
     .attr("r",6);
 
   function buildCheckboxes() {
-    controls.selectAll("label.mode-checkbox").remove();
+    // Clear all sub-options
+    d3.selectAll(".sub-options").selectAll("label").remove();
+
+    // Only show sub-options under the current mode
+    const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
+    const subOptionsDiv = d3.select(subDiv).select(".sub-options");
+
     const values = [...new Set(data.map(d => (d[currentMode] || "").trim().toLowerCase()))].sort();
     values.forEach(v => {
-      const div = controls.append("label").classed("mode-checkbox", true);
-      div.append("input")
+      const label = subOptionsDiv.append("label");
+      label.append("input")
         .attr("type", "checkbox")
         .attr("checked", true)
         .attr("value", v)
         .on("change", update);
-      div.append("span").text(" " + v);
+      label.append("span").text(" " + v);
     });
+
+    // Hide all other sub-options
+    d3.selectAll(".mode-option .sub-options").style("display", "none");
+    subOptionsDiv.style("display", "block");
   }
 
   function update() {
-    const active = new Set(d3.selectAll(".mode-checkbox input:checked").nodes().map(d => d.value.trim().toLowerCase()));
+    // Get the sub-options div for the current mode
+    const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
+    const subOptionsDiv = d3.select(subDiv).select(".sub-options");
+
+    const active = new Set(subOptionsDiv.selectAll("input:checked").nodes().map(d => d.value.trim().toLowerCase()));
     const cmap = colorMaps[currentMode];
 
     cells.attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
@@ -115,8 +136,9 @@ d3.csv("godsdienst_pixels.csv", d => {
   buildCheckboxes();
   update();
 
-  d3.select("#modeSelect").on("change",function(){
-    currentMode=this.value;
+  // Listen to radio buttons for mode change
+  controls.selectAll("input[name='mode']").on("change", function() {
+    currentMode = this.value;
     buildCheckboxes();
     update();
   });

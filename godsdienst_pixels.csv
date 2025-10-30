@@ -1,30 +1,30 @@
-address,religion,x,y
-Lauwestraat 53B,iets,1752.3,413.92
-Lauwestraat 53A,katholiek,1763.99,397.85
-Lauwestraat 51,niet gelovig,1780.07,358.32
-Lauwestraat 47,niet gelovig,1788.76,348.66
-Lauwestraat 34,niet gelovig,1773.33,304.49
-Lauwestraat 31,katholiek,1820.82,314.77
-Lauwestraat 32,niet geintereseerd,1794.33,282.67
-Lauwestraat 29,niet geintereseerd,1822.65,303.51
-Lauwestraat 27,katholiek,1831.65,305.4
-Lauwestraat 25,niet gelovig,1833.25,293.79
-Lauwestraat 23,katholiek,1834.97,289.13
-Hans Van Wervekestraat 16,katholiek,1905.9,246.8
-Hans Van Wervekestraat 14,katholiek,1907.22,256.58
-Lauwestraat 9,niet geintereseerd,1925.92,287.61
-Hans Van Wervekestraat 1A,niet geintereseerd,1915.98,300.63
-Hans Van Wervekestraat 1B,niet geintereseerd,1911.37,304.55
-Hans Van Wervekestraat 8,niet geintereseerd,1889.54,329.97
-Hans Van Wervekestraat 13,niet gelovig,1868.2,358.09
-Borluutplein 17,niet geintereseerd,1830.01,395.56
-Borluutplein 15,niet gelovig,1835.01,397.56
-Borluutplein 11,iets,1841.2,399.86
-Borluutplein 2,niet gelovig,1893.7,434.24
-Borluutplein 10,niet geintereseerd,1894.02,379.67
-Borluutplein 5,niet geintereseerd,1855.26,435.7
-Borluutstraat 18,niet geintereseerd,1921.81,411.79
-Borluutstraat 16,niet gelovig,1927.06,409.01
-Borluutstraat 9,niet geintereseerd,1962.03,407.45
-Loofblomme straat 65,niet geintereseerd,1976.98,316.28
-Loofblomme straat 67,niet gelovig,1972.7,310.66
+address,religion,x,y,religious,regularly
+Lauwestraat 53B,iets,1752.3,413.92,yes,no
+Lauwestraat 53A,katholiek,1763.99,397.85,yes,no
+Lauwestraat 51,niet gelovig,1780.07,358.32,no,no
+Lauwestraat 47,niet gelovig,1788.76,348.66,no,no
+Lauwestraat 34,niet gelovig,1773.33,304.49,no,no
+Lauwestraat 31,katholiek,1820.82,314.77,yes,no
+Lauwestraat 32,niet geintereseerd,1794.33,282.67,no,no
+Lauwestraat 29,niet geintereseerd,1822.65,303.51,no,no
+Lauwestraat 27,katholiek,1831.65,305.4,yes,no
+Lauwestraat 25,niet gelovig,1833.25,293.79,no,no
+Lauwestraat 23,katholiek,1834.97,289.13,yes,no
+Hans Van Wervekestraat 16,katholiek,1905.9,246.8,yes,yes
+Hans Van Wervekestraat 14,katholiek,1907.22,256.58,yes,yes
+Lauwestraat 9,niet geintereseerd,1925.92,287.61,no,no
+Hans Van Wervekestraat 1A,niet geintereseerd,1915.98,300.63,no,no
+Hans Van Wervekestraat 1B,niet geintereseerd,1911.37,304.55,no,no
+Hans Van Wervekestraat 8,niet geintereseerd,1889.54,329.97,no,no
+Hans Van Wervekestraat 13,niet gelovig,1868.2,358.09,no,no
+Borluutplein 17,niet geintereseerd,1830.01,395.56,no,no
+Borluutplein 15,niet gelovig,1835.01,397.56,no,no
+Borluutplein 11,iets,1841.2,399.86,yes,no
+Borluutplein 2,niet gelovig,1893.7,434.24,no,no
+Borluutplein 10,niet geintereseerd,1894.02,379.67,no,no
+Borluutplein 5,niet geintereseerd,1855.26,435.7,no,no
+Borluutstraat 18,niet geintereseerd,1921.81,411.79,no,no
+Borluutstraat 16,niet gelovig,1927.06,409.01,no,no
+Borluutstraat 9,niet geintereseerd,1962.03,407.45,no,no
+Loofblomme straat 65,niet geintereseerd,1976.98,316.28,no,no
+Loofblomme straat 67,niet gelovig,1972.7,310.66,no,no

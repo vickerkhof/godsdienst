@@ -52,7 +52,7 @@ g.append("image").attr("xlink:href","kepler.png").attr("x",0).attr("y",0).attr("
 
 const tooltip = d3.select(".tooltip");
 
-d3.csv("new.csv", d => {
+d3.csv("godsdienst_pixels.csv", d => {
     const cleaned = {};
     Object.keys(d).forEach(key => {
       const cleanKey = key.trim().toLowerCase();

@@ -52,7 +52,7 @@ g.append("image").attr("xlink:href","kepler.png").attr("x",0).attr("y",0).attr("
 
 const tooltip = d3.select(".tooltip");
 
-d3.csv("godsdienst_pixels.csv", d => {
+d3.csv("new.csv", d => {
     const cleaned = {};
     Object.keys(d).forEach(key => {
       const cleanKey = key.trim().toLowerCase();
@@ -94,10 +94,7 @@ d3.csv("godsdienst_pixels.csv", d => {
     .attr("r",6);
 
   function buildCheckboxes() {
-    // Clear all sub-options
     d3.selectAll(".sub-options").selectAll("label").remove();
-
-    // Only show sub-options under the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
@@ -112,13 +109,11 @@ d3.csv("godsdienst_pixels.csv", d => {
       label.append("span").text(" " + v);
     });
 
-    // Hide all other sub-options
     d3.selectAll(".mode-option .sub-options").style("display", "none");
     subOptionsDiv.style("display", "block");
   }
 
   function update() {
-    // Get the sub-options div for the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
@@ -136,7 +131,6 @@ d3.csv("godsdienst_pixels.csv", d => {
   buildCheckboxes();
   update();
 
-  // Listen to radio buttons for mode change
   controls.selectAll("input[name='mode']").on("change", function() {
     currentMode = this.value;
     buildCheckboxes();
@@ -144,8 +138,23 @@ d3.csv("godsdienst_pixels.csv", d => {
   });
 });
 
-const zoom=d3.zoom().scaleExtent([1,6]).translateExtent([[0,0],[bgWidth,bgHeight]]).on("zoom",event=>g.attr("transform",event.transform));
-svg.call(zoom);
+// ===== Zoom that depends on HEIGHT =====
+function setZoomBehavior() {
+  const viewHeight = window.innerHeight;
+  const maxZoom = (bgHeight / viewHeight) * 2; // tweak multiplier for desired zoom range
+
+  const zoom = d3.zoom()
+    .scaleExtent([1, maxZoom])
+    .translateExtent([[0, 0], [bgWidth, bgHeight]])
+    .on("zoom", event => g.attr("transform", event.transform));
+
+  svg.call(zoom);
+}
+
+setZoomBehavior();
+
+// Recalculate zoom range when window resizes
+window.addEventListener("resize", setZoomBehavior);
 </script>
 
 </body>

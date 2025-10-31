@@ -52,41 +52,23 @@ g.append("image").attr("xlink:href","kepler.png").attr("x",0).attr("y",0).attr("
 
 const tooltip = d3.select(".tooltip");
 
-// --- Hard-coded data from your CSV ---
-const data = [
-  { address: "Lauwestraat 53B", religion: "iets", x: 1752.3, y: 413.92, religious: "yes", regularly: "no" },
-  { address: "Lauwestraat 53A", religion: "katholiek", x: 1763.99, y: 397.85, religious: "yes", regularly: "no" },
-  { address: "Lauwestraat 51", religion: "niet gelovig", x: 1780.07, y: 358.32, religious: "no", regularly: "no" },
-  { address: "Lauwestraat 47", religion: "niet gelovig", x: 1788.76, y: 348.66, religious: "no", regularly: "no" },
-  { address: "Lauwestraat 34", religion: "niet gelovig", x: 1773.33, y: 304.49, religious: "no", regularly: "no" },
-  { address: "Lauwestraat 31", religion: "katholiek", x: 1820.82, y: 314.77, religious: "yes", regularly: "no" },
-  { address: "Lauwestraat 32", religion: "niet geintereseerd", x: 1794.33, y: 282.67, religious: "no", regularly: "no" },
-  { address: "Lauwestraat 29", religion: "niet geintereseerd", x: 1822.65, y: 303.51, religious: "no", regularly: "no" },
-  { address: "Lauwestraat 27", religion: "katholiek", x: 1831.65, y: 305.4, religious: "yes", regularly: "no" },
-  { address: "Lauwestraat 25", religion: "niet gelovig", x: 1833.25, y: 293.79, religious: "no", regularly: "no" },
-  { address: "Lauwestraat 23", religion: "katholiek", x: 1834.97, y: 289.13, religious: "yes", regularly: "no" },
-  { address: "Hans Van Wervekestraat 16", religion: "katholiek", x: 1905.9, y: 246.8, religious: "yes", regularly: "yes" },
-  { address: "Hans Van Wervekestraat 14", religion: "katholiek", x: 1907.22, y: 256.58, religious: "yes", regularly: "yes" },
-  { address: "Lauwestraat 9", religion: "niet geintereseerd", x: 1925.92, y: 287.61, religious: "no", regularly: "no" },
-  { address: "Hans Van Wervekestraat 1A", religion: "niet geintereseerd", x: 1915.98, y: 300.63, religious: "no", regularly: "no" },
-  { address: "Hans Van Wervekestraat 1B", religion: "niet geintereseerd", x: 1911.37, y: 304.55, religious: "no", regularly: "no" },
-  { address: "Hans Van Wervekestraat 8", religion: "niet geintereseerd", x: 1889.54, y: 329.97, religious: "no", regularly: "no" },
-  { address: "Hans Van Wervekestraat 13", religion: "niet gelovig", x: 1868.2, y: 358.09, religious: "no", regularly: "no" },
-  { address: "Borluutplein 17", religion: "niet geintereseerd", x: 1830.01, y: 395.56, religious: "no", regularly: "no" },
-  { address: "Borluutplein 15", religion: "niet gelovig", x: 1835.01, y: 397.56, religious: "no", regularly: "no" },
-  { address: "Borluutplein 11", religion: "iets", x: 1841.2, y: 399.86, religious: "yes", regularly: "no" },
-  { address: "Borluutplein 2", religion: "niet gelovig", x: 1893.7, y: 434.24, religious: "no", regularly: "no" },
-  { address: "Borluutplein 10", religion: "niet geintereseerd", x: 1894.02, y: 379.67, religious: "no", regularly: "no" },
-  { address: "Borluutplein 5", religion: "niet geintereseerd", x: 1855.26, y: 435.7, religious: "no", regularly: "no" },
-  { address: "Borluutstraat 18", religion: "niet geintereseerd", x: 1921.81, y: 411.79, religious: "no", regularly: "no" },
-  { address: "Borluutstraat 16", religion: "niet gelovig", x: 1927.06, y: 409.01, religious: "no", regularly: "no" },
-  { address: "Borluutstraat 9", religion: "niet geintereseerd", x: 1962.03, y: 407.45, religious: "no", regularly: "no" },
-  { address: "Loofblomme straat 65", religion: "niet geintereseerd", x: 1976.98, y: 316.28, religious: "no", regularly: "no" },
-  { address: "Loofblomme straat 67", religion: "niet gelovig", x: 1972.7, y: 310.66, religious: "no", regularly: "no" }
-];
+d3.csv("godsdienst_pixels.csv", d => {
+    const cleaned = {};
+    Object.keys(d).forEach(key => {
+      const cleanKey = key.trim().toLowerCase();
+      const val = d[key] ? d[key].trim() : "";
+      cleaned[cleanKey] = val;
+    });
+    return {
+      address: cleaned.address || "",
+      religion: cleaned.religion || "default",
+      x: +cleaned.x,
+      y: +cleaned.y,
+      religious: cleaned.religious || "no",
+      regularly: cleaned.regularly || "no"
+    };
+}).then(data => {
 
-// --- Rest of your code ---
-(() => {
   const controls = d3.select(".controls");
 
   const delaunay = d3.Delaunay.from(data,d=>d.x,d=>d.y);
@@ -112,8 +94,10 @@ const data = [
     .attr("r",6);
 
   function buildCheckboxes() {
+    // Clear all sub-options
     d3.selectAll(".sub-options").selectAll("label").remove();
 
+    // Only show sub-options under the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
@@ -128,11 +112,13 @@ const data = [
       label.append("span").text(" " + v);
     });
 
+    // Hide all other sub-options
     d3.selectAll(".mode-option .sub-options").style("display", "none");
     subOptionsDiv.style("display", "block");
   }
 
   function update() {
+    // Get the sub-options div for the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
@@ -150,20 +136,26 @@ const data = [
   buildCheckboxes();
   update();
 
+  // Listen to radio buttons for mode change
   controls.selectAll("input[name='mode']").on("change", function() {
     currentMode = this.value;
     buildCheckboxes();
     update();
   });
-})();
+});
 
 const viewportHeight = window.innerHeight;
+
+// max zoom so image height matches viewport height
 const maxZoom = viewportHeight / bgHeight;
 
 const zoom = d3.zoom()
-  .scaleExtent([1, 6])
+  .scaleExtent([1, 6])  // Allow zooming in and out freely
   .translateExtent([[0,0],[bgWidth,bgHeight]])
   .on("zoom", event => g.attr("transform", event.transform));
+
+svg.call(zoom);
+
 
 svg.call(zoom);
 

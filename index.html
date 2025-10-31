@@ -161,7 +161,7 @@ const viewportHeight = window.innerHeight;
 const maxZoom = viewportHeight / bgHeight;
 
 const zoom = d3.zoom()
-  .scaleExtent([1, maxZoom])
+  .scaleExtent([1, 6])
   .translateExtent([[0,0],[bgWidth,bgHeight]])
   .on("zoom", event => g.attr("transform", event.transform));
 

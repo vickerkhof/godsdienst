@@ -5,11 +5,8 @@
 <title>Interactive Religion Map</title>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
-html, body { 
-  margin:0; padding:0; overflow:hidden; background:#f8f8f8;
-  width:100%; height:100%;
-}
-svg { width:100vw; height:100vh; display:block; cursor:grab; background:#f8f8f8; }
+html, body { margin:0; padding:0; overflow:hidden; background:#f8f8f8; }
+svg { width:100vw; height:100vh; display:block; cursor:grab; }
 .tooltip { position:absolute; background:rgba(255,255,255,0.9); padding:5px 8px; border-radius:5px; font-size:13px; border:1px solid #ccc; pointer-events:none; }
 .controls { position:absolute; top:10px; left:10px; background:rgba(255,255,255,0.9); padding:10px 15px; border-radius:10px; font-family:sans-serif; font-size:14px; pointer-events:auto; cursor:default; z-index:10; }
 .controls label { display:block; margin-bottom:4px; }
@@ -97,7 +94,10 @@ d3.csv("new.csv", d => {
     .attr("r",6);
 
   function buildCheckboxes() {
+    // Clear all sub-options
     d3.selectAll(".sub-options").selectAll("label").remove();
+
+    // Only show sub-options under the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
@@ -112,11 +112,13 @@ d3.csv("new.csv", d => {
       label.append("span").text(" " + v);
     });
 
+    // Hide all other sub-options
     d3.selectAll(".mode-option .sub-options").style("display", "none");
     subOptionsDiv.style("display", "block");
   }
 
   function update() {
+    // Get the sub-options div for the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
@@ -134,6 +136,7 @@ d3.csv("new.csv", d => {
   buildCheckboxes();
   update();
 
+  // Listen to radio buttons for mode change
   controls.selectAll("input[name='mode']").on("change", function() {
     currentMode = this.value;
     buildCheckboxes();
@@ -141,46 +144,8 @@ d3.csv("new.csv", d => {
   });
 });
 
-// ===== Zoom that ensures NO WHITESPACE =====
-function setZoomBehavior() {
-  const viewWidth = window.innerWidth;
-  const viewHeight = window.innerHeight;
-
-  // The minimum zoom makes the image exactly fill the viewport
-  const minZoom = Math.max(viewWidth / bgWidth, viewHeight / bgHeight);
-
-  // Maximum zoom (you can tweak the multiplier)
-  const maxZoom = minZoom * 6;
-
-  const zoom = d3.zoom()
-    .scaleExtent([minZoom, maxZoom])
-    .translateExtent([[0, 0], [bgWidth, bgHeight]])
-    .on("zoom", event => {
-      const { x, y, k } = event.transform;
-
-      // Clamp panning so no whitespace shows
-      const maxX = 0;
-      const minX = viewWidth - bgWidth * k;
-      const maxY = 0;
-      const minY = viewHeight - bgHeight * k;
-
-      const clampedX = Math.min(maxX, Math.max(minX, x));
-      const clampedY = Math.min(maxY, Math.max(minY, y));
-
-      g.attr("transform", `translate(${clampedX},${clampedY}) scale(${k})`);
-    });
-
-  svg.call(zoom)
-     .call(zoom.transform, d3.zoomIdentity
-       .translate((viewWidth - bgWidth * minZoom) / 2, (viewHeight - bgHeight * minZoom) / 2)
-       .scale(minZoom)
-     );
-}
-
-setZoomBehavior();
-
-// Recalculate zoom range when window resizes
-window.addEventListener("resize", setZoomBehavior);
+const zoom=d3.zoom().scaleExtent([1,6]).translateExtent([[0,0],[bgWidth,bgHeight]]).on("zoom",event=>g.attr("transform",event.transform));
+svg.call(zoom);
 </script>
 
 </body>

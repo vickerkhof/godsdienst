@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<meta charset="UTF-8">
 <title>Interactive Religion Map</title>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
-  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#f8f8f8}
-  svg{width:100vw;height:100vh;display:block;cursor:grab;touch-action:none;background:#f8f8f8}
-  .tooltip{position:absolute;background:rgba(255,255,255,0.95);padding:6px 8px;border-radius:6px;font-size:13px;border:1px solid #ccc;pointer-events:none}
-  .controls{position:absolute;top:10px;left:10px;background:rgba(255,255,255,0.9);padding:10px;border-radius:10px;font-family:sans-serif;font-size:14px;z-index:10}
-  .controls label{display:block;margin-bottom:4px}
-  .controls .sub-options{margin-top:4px;padding-left:16px}
+html, body { margin:0; padding:0; overflow:hidden; background:#f8f8f8; }
+svg { width:100vw; height:100vh; display:block; cursor:grab; }
+.tooltip { position:absolute; background:rgba(255,255,255,0.9); padding:5px 8px; border-radius:5px; font-size:13px; border:1px solid #ccc; pointer-events:none; }
+.controls { position:absolute; top:10px; left:10px; background:rgba(255,255,255,0.9); padding:10px 15px; border-radius:10px; font-family:sans-serif; font-size:14px; pointer-events:auto; cursor:default; z-index:10; }
+.controls label { display:block; margin-bottom:4px; }
+.controls .sub-options { margin-top:4px; padding-left:16px; }
 </style>
 </head>
 <body>
@@ -34,15 +33,11 @@
   </div>
 </div>
 
-<div class="tooltip" style="opacity:0"></div>
+<div class="tooltip" style="opacity:0;"></div>
 
 <script>
-/* ----- config ----- */
-const bgWidth = 3840, bgHeight = 1918; // your image internal pixel size
-const imageHref = "kepler.png";        // background image
-const csvFile = "godsdienst_pixels.csv";
+const bgWidth = 3840, bgHeight = 1918;
 
-/* color maps (unchanged) */
 const colorMaps = {
   religion: { "katholiek":"#1f77b4", "niet gelovig":"#ff7f0e", "niet geintereseerd":"#2ca02c", "iets":"#d62728", default:"#cccccc" },
   religious: { yes:"#2ca02c", no:"#d62728", default:"#cccccc" },
@@ -51,99 +46,88 @@ const colorMaps = {
 
 let currentMode = "religion";
 
-/* ----- SVG and group ----- */
-/* Use viewBox so coordinates (points/voronoi) remain in image pixels.
-   Use preserveAspectRatio="xMidYMid slice" so the browser *covers* the viewport (no whitespace).
-   D3 zoom will then operate relative to that base/browser scale.
-*/
-const svg = d3.select("body")
-  .append("svg")
-  .attr("viewBox", `0 0 ${bgWidth} ${bgHeight}`)
-  .attr("preserveAspectRatio", "xMidYMid slice"); // IMPORTANT: cover the viewport
-
+const svg = d3.select("body").append("svg").attr("viewBox",[0,0,bgWidth,bgHeight]);
 const g = svg.append("g");
-g.append("image")
-  .attr("xlink:href", imageHref)
-  .attr("x", 0)
-  .attr("y", 0)
-  .attr("width", bgWidth)
-  .attr("height", bgHeight);
+g.append("image").attr("xlink:href","kepler.png").attr("x",0).attr("y",0).attr("width",bgWidth).attr("height",bgHeight);
 
-/* tooltip */
 const tooltip = d3.select(".tooltip");
 
-/* ----- load CSV ----- */
-d3.csv(csvFile, d => {
-  const cleaned = {};
-  Object.keys(d).forEach(key => {
-    const k = key.trim().toLowerCase();
-    const v = d[key] ? d[key].trim() : "";
-    cleaned[k] = v;
-  });
-  return {
-    address: cleaned.address || "",
-    religion: cleaned.religion || "default",
-    x: +cleaned.x,
-    y: +cleaned.y,
-    religious: cleaned.religious || "no",
-    regularly: cleaned.regularly || "no"
-  };
+d3.csv("new.csv", d => {
+    const cleaned = {};
+    Object.keys(d).forEach(key => {
+      const cleanKey = key.trim().toLowerCase();
+      const val = d[key] ? d[key].trim() : "";
+      cleaned[cleanKey] = val;
+    });
+    return {
+      address: cleaned.address || "",
+      religion: cleaned.religion || "default",
+      x: +cleaned.x,
+      y: +cleaned.y,
+      religious: cleaned.religious || "no",
+      regularly: cleaned.regularly || "no"
+    };
 }).then(data => {
-  // build viz (same as before)
+
   const controls = d3.select(".controls");
 
-  const delaunay = d3.Delaunay.from(data, d => d.x, d => d.y);
+  const delaunay = d3.Delaunay.from(data,d=>d.x,d=>d.y);
   const voronoi = delaunay.voronoi([0,0,bgWidth,bgHeight]);
 
-  function safeRenderCell(i){
-    try {
-      const path = voronoi.renderCell(i);
-      return (!path || path.includes("NaN")) ? null : path;
-    } catch { return null; }
-  }
+  function safeRenderCell(i){try{const path=voronoi.renderCell(i);return(!path||path.includes("NaN"))?null:path}catch{return null}}
 
   const cells = g.selectAll("path").data(data).join("path")
-    .attr("d", (_, i) => safeRenderCell(i))
+    .attr("d",(_,i)=>safeRenderCell(i))
     .attr("stroke","#333")
     .attr("stroke-width",0.3)
-    .on("mousemove", (event, d) => tooltip.style("opacity",1)
-      .style("left", (event.pageX + 12) + "px")
-      .style("top", (event.pageY - 10) + "px")
+    .on("mousemove",(event,d)=>tooltip.style("opacity",1)
+      .style("left",(event.pageX+12)+"px")
+      .style("top",(event.pageY-10)+"px")
       .html(`<b>${d.religion}</b><br>${d.address}<br>Religious: ${d.religious}<br>Regular: ${d.regularly}`))
-    .on("mouseout", () => tooltip.style("opacity",0));
+    .on("mouseout",()=>tooltip.style("opacity",0));
 
   const points = g.selectAll("circle").data(data).join("circle")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("stroke", "#000")
-    .attr("stroke-width", 0.5)
-    .attr("r", 6);
+    .attr("cx",d=>d.x)
+    .attr("cy",d=>d.y)
+    .attr("stroke","#000")
+    .attr("stroke-width",0.5)
+    .attr("r",6);
 
   function buildCheckboxes() {
+    // Clear all sub-options
     d3.selectAll(".sub-options").selectAll("label").remove();
+
+    // Only show sub-options under the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
 
     const values = [...new Set(data.map(d => (d[currentMode] || "").trim().toLowerCase()))].sort();
     values.forEach(v => {
       const label = subOptionsDiv.append("label");
-      label.append("input").attr("type","checkbox").attr("checked",true).attr("value",v).on("change", update);
+      label.append("input")
+        .attr("type", "checkbox")
+        .attr("checked", true)
+        .attr("value", v)
+        .on("change", update);
       label.append("span").text(" " + v);
     });
 
-    d3.selectAll(".mode-option .sub-options").style("display","none");
-    subOptionsDiv.style("display","block");
+    // Hide all other sub-options
+    d3.selectAll(".mode-option .sub-options").style("display", "none");
+    subOptionsDiv.style("display", "block");
   }
 
   function update() {
+    // Get the sub-options div for the current mode
     const subDiv = d3.select(`input[name='mode'][value='${currentMode}']`).node().closest('.mode-option');
     const subOptionsDiv = d3.select(subDiv).select(".sub-options");
-    const active = new Set(subOptionsDiv.selectAll("input:checked").nodes().map(n => n.value.trim().toLowerCase()));
+
+    const active = new Set(subOptionsDiv.selectAll("input:checked").nodes().map(d => d.value.trim().toLowerCase()));
     const cmap = colorMaps[currentMode];
 
     cells.attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
          .attr("fill", d => cmap[(d[currentMode] || "").trim().toLowerCase()] || cmap.default)
-         .attr("fill-opacity", 0.5);
+         .attr("fill-opacity",0.5);
 
     points.attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
           .attr("fill", d => cmap[(d[currentMode] || "").trim().toLowerCase()] || cmap.default);
@@ -152,77 +136,27 @@ d3.csv(csvFile, d => {
   buildCheckboxes();
   update();
 
+  // Listen to radio buttons for mode change
   controls.selectAll("input[name='mode']").on("change", function() {
     currentMode = this.value;
     buildCheckboxes();
     update();
   });
-}); // end CSV load
+});
 
-/* ----- Zoom & pan that respects the browser's "cover" scaling ----- */
-let zoomBehavior;      // keep reference so we can rebind on resize
-let baseScale = 1;     // the browser's scale used by preserveAspectRatio="slice" (calculated per viewport)
-const MAX_MULTIPLIER = 6; // allow up to 6x zoom relative to the base cover
+const viewportHeight = window.innerHeight;
 
-function setZoomBehavior(){
-  const viewW = window.innerWidth;
-  const viewH = window.innerHeight;
+// max zoom so image height matches viewport height
+const maxZoom = viewportHeight / bgHeight;
 
-  // The browser uses "slice" so it scales the SVG by baseScale = max(viewW/bgWidth, viewH/bgHeight)
-  baseScale = Math.max(viewW / bgWidth, viewH / bgHeight);
+const zoom = d3.zoom()
+  .scaleExtent([1, maxZoom])
+  .translateExtent([[0,0],[bgWidth,bgHeight]])
+  .on("zoom", event => g.attr("transform", event.transform));
 
-  // D3's k = 1 means "no extra zoom" (the browser's cover scale is already applied).
-  // Allow the user to zoom up to MAX_MULTIPLIER times that base.
-  const minK = 1;
-  const maxK = MAX_MULTIPLIER;
-
-  // Zoom handler — event.transform.k is the relative zoom factor (1 === cover)
-  zoomBehavior = d3.zoom()
-    .scaleExtent([minK, maxK])
-    .on("zoom", (event) => {
-      const k = event.transform.k;       // relative zoom (1 = cover)
-      const tx = event.transform.x;
-      const ty = event.transform.y;
-
-      // visible image size in screen pixels = bgDim * baseScale * k
-      const visibleW = bgWidth * baseScale * k;
-      const visibleH = bgHeight * baseScale * k;
-
-      // clamp translation so image always covers viewport (no whitespace)
-      const minX = viewW - visibleW; // leftmost translate allowed
-      const minY = viewH - visibleH; // topmost translate allowed
-      const maxX = 0;                // rightmost translate allowed
-      const maxY = 0;                // bottommost translate allowed
-
-      const clampedX = Math.min(maxX, Math.max(minX, tx));
-      const clampedY = Math.min(maxY, Math.max(minY, ty));
-
-      // apply transform to group — D3 transform k multiplies SVG units; browser already applied baseScale
-      // so visible result = baseScale * k
-      g.attr("transform", `translate(${clampedX},${clampedY}) scale(${k})`);
-    });
-
-  // bind zoom to svg
-  svg.call(zoomBehavior);
-
-  // reset to the "cover" (k = 1) centered position:
-  // We want to place the image so that after browser cover scaling it is centered.
-  // Compute initial translate that centers the *visible* covered image.
-  const initVisibleW = bgWidth * baseScale;
-  const initVisibleH = bgHeight * baseScale;
-  const initTx = (viewW - initVisibleW) / 2;
-  const initTy = (viewH - initVisibleH) / 2;
-
-  // Set D3's transform to identity scale (k=1) but with the computed translation.
-  // We use d3.zoomIdentity.translate(...).scale(1)
-  svg.call(zoomBehavior.transform, d3.zoomIdentity.translate(initTx, initTy).scale(1));
-}
-
-// initial bind
-setZoomBehavior();
-// recalc on resize/rotation
-window.addEventListener("resize", () => { setZoomBehavior(); });
+svg.call(zoom);
 
 </script>
+
 </body>
 </html>

@@ -1,60 +1,60 @@
 address,religion,x,y,religious,regularly
-Lauwstraat 53B,iets,1752.3,413.92,ja,nee
-Lauwstraat 53A,katholiek,1763.99,397.85,ja,nee
-Lauwstraat 51,niet gelovig,1780.07,358.32,nee,nee
-Lauwstraat 47,niet gelovig,1788.76,348.66,nee,nee
-Lauwstraat 34,niet gelovig,1773.33,304.49,nee,nee
-Lauwstraat 31,katholiek,1820.82,314.77,ja,nee
-Lauwstraat 32,niet geintereseerd,1794.33,282.67,nee,nee
-Lauwstraat 29,niet geintereseerd,1822.65,303.51,nee,nee
-Lauwstraat 27,katholiek,1831.65,305.4,ja,nee
-Lauwstraat 25,niet gelovig,1833.25,293.79,nee,nee
-Lauwstraat 23,katholiek,1834.97,289.13,ja,nee
-Hans Van Wervekestraat 16,katholiek,1905.9,246.8,ja,ja
-Hans Van Wervekestraat 14,katholiek,1907.22,256.58,ja,ja
-Lauwstraat 9,niet geintereseerd,1925.92,287.61,nee,nee
-Hans Van Wervekestraat 1A,niet geintereseerd,1915.98,300.63,nee,nee
-Hans Van Wervekestraat 1B,niet geintereseerd,1911.37,304.55,nee,nee
-Hans Van Wervekestraat 8,niet geintereseerd,1889.54,329.97,nee,nee
-Hans Van Wervekestraat 13,niet gelovig,1868.2,358.09,nee,nee
-Borluutplein 17,niet geintereseerd,1830.01,395.56,nee,nee
-Borluutplein 15,niet gelovig,1835.01,397.56,nee,nee
-Borluutplein 11,iets,1841.2,399.86,ja,nee
-Borluutplein 2,niet gelovig,1893.7,434.24,nee,nee
-Borluutplein 10,niet geintereseerd,1894.02,379.67,nee,nee
-Borluutplein 5,niet geintereseerd,1855.26,435.7,nee,nee
-Borluutstraat 18,niet geintereseerd,1921.81,411.79,nee,nee
-Borluutstraat 16,niet gelovig,1927.06,409.01,nee,nee
-Borluutstraat 9,niet geintereseerd,1962.03,407.45,nee,nee
-Loofblomme straat 65,niet geintereseerd,1976.98,316.28,nee,nee
-Loofblomme straat 67,niet gelovig,1972.7,310.66,nee,nee
-Geo Verbancklaan 7, niet gelovig, 2121, 1243, nee, nee
-Soenenspark 12, niet gelovig, 2292, 1056, nee, nee
-Soenenspark 53, niet gelovig, 2338, 997, nee, nee
-Soenenspark 5, katholiek, 2276, 960, ja, nee
-Soenenspark 30, niet geintereseerd, 2435, 1077, ja, ja
-Soenenspark 31, niet geintereseerd, 2392, 1063, nee, nee
-Soenenspark 28, niet geintereseerd, 2382, 1092, nee, nee
-Soenenspark 16, niet geintereseerd, 2334, 1103, nee, nee
-Soenenspark 17, niet gelovig, 2316, 1127, nee, nee
-Soenenspark 26A, niet gelovig, 2402, 1144, nee, nee
-Soenenspark 25, niet gelovig, 2355, 1160, nee, nee
-Soenenspark 24, niet gelovig, 2347, 1188, nee, nee
-Soenenspark 22, katholiek, 2365, 1236, ja, nee
-Belgielaan 9, katholiek, 2311, 1269, nee, nee
-Belgielaan 7, Islam, 2338, 1294, ja, ja
-Belgielaan 5, katholiek, 2361, 1279, ja, ja
-Schoonzicht 12, niet geintereseerd, 2259, 1267, nee, nee
-Schoonzicht 8, katholiek, 2241, 1232, ja, nee
-Schoonzicht 35, niet gelovig, 2260, 1178, nee, nee
-Schoonzicht 6, katholiek, 2215, 1187, ja, nee
-Schoonzicht 33A, Islam, 2245, 1155, ja, ja
-James Ensorlaan 3, niet gelovig, 2182, 1362, nee, nee
-Belgielaan 15, niet geintereseerd, 2187, 1325, nee, nee
-Belgielaan 25, niet geintereseerd, 2281, 1350, nee, nee
-Belgielaan 27, katholiek, 2265, 1369, nee, nee
-Belgielaan 29, niet geintereseerd, 2254, 1392, nee, nee
-Belgielaan 4, niet geintereseerd, 2196, 1402, nee, nee
-Belgielaan 6, niet geintereseerd, 2199, 1443, nee, nee
-Belgielaan 51, niet geintereseerd, 2183, 1361, nee, nee
-Belgielaan 55, katholiek, 2162, 1371, nee, nee
+Lauwstraat,iets,1752.3,413.92,ja,nee
+Lauwstraat,katholiek,1763.99,397.85,ja,nee
+Lauwstraat,niet gelovig,1780.07,358.32,nee,nee
+Lauwstraat,niet gelovig,1788.76,348.66,nee,nee
+Lauwstraat,niet gelovig,1773.33,304.49,nee,nee
+Lauwstraat,katholiek,1820.82,314.77,ja,nee
+Lauwstraat,niet geintereseerd,1794.33,282.67,nee,nee
+Lauwstraat,niet geintereseerd,1822.65,303.51,nee,nee
+Lauwstraat,katholiek,1831.65,305.4,ja,nee
+Lauwstraat,niet gelovig,1833.25,293.79,nee,nee
+Lauwstraat,katholiek,1834.97,289.13,ja,nee
+Hans Van Wervekestraat,katholiek,1905.9,246.8,ja,ja
+Hans Van Wervekestraat,katholiek,1907.22,256.58,ja,ja
+Lauwstraat,niet geintereseerd,1925.92,287.61,nee,nee
+Hans Van Wervekestraat,niet geintereseerd,1915.98,300.63,nee,nee
+Hans Van Wervekestraat,niet geintereseerd,1911.37,304.55,nee,nee
+Hans Van Wervekestraat,niet geintereseerd,1889.54,329.97,nee,nee
+Hans Van Wervekestraat,niet gelovig,1868.2,358.09,nee,nee
+Borluutplein,niet geintereseerd,1830.01,395.56,nee,nee
+Borluutplein,niet gelovig,1835.01,397.56,nee,nee
+Borluutplein,iets,1841.2,399.86,ja,nee
+Borluutplein,niet gelovig,1893.7,434.24,nee,nee
+Borluutplein,niet geintereseerd,1894.02,379.67,nee,nee
+Borluutplein,niet geintereseerd,1855.26,435.7,nee,nee
+Borluutstraat,niet geintereseerd,1921.81,411.79,nee,nee
+Borluutstraat,niet gelovig,1927.06,409.01,nee,nee
+Borluutstraat,niet geintereseerd,1962.03,407.45,nee,nee
+Loofblomme straat,niet geintereseerd,1976.98,316.28,nee,nee
+Loofblomme straat,niet gelovig,1972.7,310.66,nee,nee
+Geo Verbancklaan,niet gelovig,2121,1243,nee,nee
+Soenenspark,niet gelovig,2292,1056,nee,nee
+Soenenspark,niet gelovig,2338,997,nee,nee
+Soenenspark,katholiek,2276,960,ja,nee
+Soenenspark,niet geintereseerd,2435,1077,ja,ja
+Soenenspark,niet geintereseerd,2392,1063,nee,nee
+Soenenspark,niet geintereseerd,2382,1092,nee,nee
+Soenenspark,niet geintereseerd,2334,1103,nee,nee
+Soenenspark,niet gelovig,2316,1127,nee,nee
+Soenenspark,niet gelovig,2402,1144,nee,nee
+Soenenspark,niet gelovig,2355,1160,nee,nee
+Soenenspark,niet gelovig,2347,1188,nee,nee
+Soenenspark,katholiek,2365,1236,ja,nee
+Belgielaan,katholiek,2311,1269,nee,nee
+Belgielaan,Islam,2338,1294,ja,ja
+Belgielaan,katholiek,2361,1279,ja,ja
+Schoonzicht,niet geintereseerd,2259,1267,nee,nee
+Schoonzicht,katholiek,2241,1232,ja,nee
+Schoonzicht,niet gelovig,2260,1178,nee,nee
+Schoonzicht,katholiek,2215,1187,ja,nee
+Schoonzicht,Islam,2245,1155,ja,ja
+James Ensorlaan,niet gelovig,2182,1362,nee,nee
+Belgielaan,niet geintereseerd,2187,1325,nee,nee
+Belgielaan,niet geintereseerd,2281,1350,nee,nee
+Belgielaan,katholiek,2265,1369,nee,nee
+Belgielaan,niet geintereseerd,2254,1392,nee,nee
+Belgielaan,niet geintereseerd,2196,1402,nee,nee
+Belgielaan,niet geintereseerd,2199,1443,nee,nee
+Belgielaan,niet geintereseerd,2183,1361,nee,nee
+Belgielaan,katholiek,2162,1371,nee,nee

@@ -17,7 +17,6 @@ svg { width:100vw; height:100vh; display:block; cursor:grab; }
 
 <div class="controls">
   <div>
-    <strong></strong>
     <div class="mode-option">
       <label><input type="radio" name="mode" value="religion" checked> Godsdienst</label>
       <div class="sub-options"></div>
@@ -48,10 +47,14 @@ const colorMaps = {
 
 let currentMode = "religion";
 
+// --- SVG Setup ---
 const svg = d3.select("body").append("svg").attr("viewBox",[0,0,bgWidth,bgHeight]);
 
-// --- ClipPath for 2 circles ---
-svg.append("defs")
+// --- Zoomable Group ---
+const zoomGroup = svg.append("g");
+
+// --- ClipPath for areas ---
+zoomGroup.append("defs")
   .append("clipPath")
   .attr("id", "circle-mask")
   .selectAll("circle")
@@ -64,16 +67,16 @@ svg.append("defs")
   .attr("cy", d => d.cy)
   .attr("r", d => d.r);
 
-// Background image always visible
-svg.append("image")
+// --- Background image inside zoomable group ---
+zoomGroup.append("image")
   .attr("xlink:href","kepler.png")
   .attr("x",0)
   .attr("y",0)
   .attr("width",bgWidth)
   .attr("height",bgHeight);
 
-// Group for Voronoi cells and points, clipped to the circles
-const g = svg.append("g").attr("clip-path", "url(#circle-mask)");
+// --- Group for Voronoi cells, clipped ---
+const g = zoomGroup.append("g").attr("clip-path", "url(#circle-mask)");
 
 const tooltip = d3.select(".tooltip");
 
@@ -84,7 +87,8 @@ svg.on("click", function(event) {
     console.log("Clicked coordinates:", Math.round(x), Math.round(y));
 });
 
-d3.csv("godsdienst_pixels.csv", d => {
+// --- Load Data ---
+d3.csv("new.csv", d => {
     const cleaned = {};
     Object.keys(d).forEach(key => {
       const cleanKey = key.trim().toLowerCase();
@@ -122,6 +126,7 @@ d3.csv("godsdienst_pixels.csv", d => {
     }
   }
 
+  // --- Draw Voronoi cells ---
   const cells = g.selectAll("path").data(data).join("path")
     .attr("d",(_,i)=>safeRenderCell(i))
     .attr("stroke","#333")
@@ -132,21 +137,7 @@ d3.csv("godsdienst_pixels.csv", d => {
       .html(`<b>${d.religion}</b><br>${d.address}<br>Religious: ${d.religious}<br>Regular: ${d.regularly}`))
     .on("mouseout",()=>tooltip.style("opacity",0));
 
-  const points = g.selectAll("circle").data(data).join("circle")
-    .attr("cx",d=>d.x)
-    .attr("cy",d=>d.y)
-    .attr("stroke","#000")
-    .attr("stroke-width",0.5)
-    .attr("r",6);
-
-  g.append("circle")
-    .attr("cx", 2111)
-    .attr("cy", 1163)
-    .attr("r", 6)
-    .attr("fill", "#000")
-    .attr("stroke", "#000")
-    .attr("stroke-width", 0.5)
-    .attr("class", "special-dot");
+  // --- Bolletjes verwijderd ---
 
   function buildCheckboxes() {
     d3.selectAll(".sub-options").selectAll("label").remove();
@@ -178,9 +169,6 @@ d3.csv("godsdienst_pixels.csv", d => {
     cells.attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
          .attr("fill", d => cmap[(d[currentMode] || "").trim().toLowerCase()] || cmap.default)
          .attr("fill-opacity",0.5);
-
-    points.attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
-          .attr("fill", d => cmap[(d[currentMode] || "").trim().toLowerCase()] || cmap.default);
   }
 
   buildCheckboxes();
@@ -193,10 +181,11 @@ d3.csv("godsdienst_pixels.csv", d => {
   });
 });
 
+// --- Zoom Setup ---
 const zoom = d3.zoom()
   .scaleExtent([1, 6])
   .translateExtent([[0,0],[bgWidth,bgHeight]])
-  .on("zoom", event => d3.select("g").attr("transform", event.transform));
+  .on("zoom", event => zoomGroup.attr("transform", event.transform));
 
 svg.call(zoom);
 </script>

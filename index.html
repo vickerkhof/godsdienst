@@ -84,7 +84,7 @@ svg.on("click", function(event) {
     console.log("Clicked coordinates:", Math.round(x), Math.round(y));
 });
 
-d3.csv("new.csv", d => {
+d3.csv("godsdienst_pixels.csv", d => {
     const cleaned = {};
     Object.keys(d).forEach(key => {
       const cleanKey = key.trim().toLowerCase();

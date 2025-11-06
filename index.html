@@ -88,7 +88,7 @@ svg.on("click", function(event) {
 });
 
 // --- Load Data ---
-d3.csv("godsdienst_pixels.csv", d => {
+d3.csv("data.csv", d => {
     const cleaned = {};
     Object.keys(d).forEach(key => {
       const cleanKey = key.trim().toLowerCase();

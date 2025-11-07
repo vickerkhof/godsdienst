@@ -18,7 +18,7 @@ svg { width:100vw; height:100vh; display:block; cursor:grab; }
 <div class="controls">
   <div>
     <div class="mode-option">
-      <label><input type="radio" name="mode" value="religion" checked> Godsdienst</label>
+      <label><input type="radio" name="mode" value="godsdienst" checked> Godsdienst</label>
       <div class="sub-options"></div>
     </div>
     <div class="mode-option">
@@ -26,7 +26,7 @@ svg { width:100vw; height:100vh; display:block; cursor:grab; }
       <div class="sub-options"></div>
     </div>
     <div class="mode-option"> 
-      <label><input type="radio" name="mode" value="regularly"> praktiserend</label>
+      <label><input type="radio" name="mode" value="praktiserend"> Praktiserend</label>
       <div class="sub-options"></div>
     </div>
   </div>
@@ -40,15 +40,30 @@ const ybonus = -20;
 const xbonus = 0;
 
 const colorMaps = {
-  godsdienst: { "katholiek":"#1f77b4", "niet gelovig":"#ff7f0e", "niet geintereseerd":"#828282", "iets":"#d62728", moslim:"#24c124", default: "#24c124"},
-  godsdienstig: { ja:"#2ca02c", nee:"#d62728", default:"#cccccc" },
-  praktiserend: { ja:"#1f77b4", nee:"#ff7f0e", default:"#cccccc" }
+  godsdienst: {
+    "katholiek": "#1f77b4",
+    "niet gelovig": "#ff7f0e",
+    "niet geintereseerd": "#828282",
+    "iets": "#d62728",
+    "moslim": "#24c124",
+    default: "#cccccc"
+  },
+  godsdienstig: {
+    ja: "#2ca02c",
+    nee: "#d62728",
+    default: "#cccccc"
+  },
+  praktiserend: {
+    ja: "#1f77b4",
+    nee: "#ff7f0e",
+    default: "#cccccc"
+  }
 };
 
 let currentMode = "godsdienst";
 
 // --- SVG Setup ---
-const svg = d3.select("body").append("svg").attr("viewBox",[0,0,bgWidth,bgHeight]);
+const svg = d3.select("body").append("svg").attr("viewBox", [0, 0, bgWidth, bgHeight]);
 
 // --- Zoomable Group ---
 const zoomGroup = svg.append("g");
@@ -59,50 +74,51 @@ zoomGroup.append("defs")
   .attr("id", "circle-mask")
   .selectAll("circle")
   .data([
-    {cx: 1864, cy: 312, r: 170},
-    {cx: 2272, cy: 1185, r: 310}
+    { cx: 1864, cy: 312, r: 170 },
+    { cx: 2272, cy: 1185, r: 310 }
   ])
   .join("circle")
   .attr("cx", d => d.cx)
   .attr("cy", d => d.cy)
   .attr("r", d => d.r);
 
-// --- Background image inside zoomable group ---
+// --- Background image ---
 zoomGroup.append("image")
-  .attr("xlink:href","kepler.png")
-  .attr("x",0)
-  .attr("y",0)
-  .attr("width",bgWidth)
-  .attr("height",bgHeight);
+  .attr("xlink:href", "kepler.png")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", bgWidth)
+  .attr("height", bgHeight);
 
 // --- Group for Voronoi cells, clipped ---
 const g = zoomGroup.append("g").attr("clip-path", "url(#circle-mask)");
 
 const tooltip = d3.select(".tooltip");
 
-// Log x,y coordinates on click
+// Log coordinates on click
 svg.on("click", function(event) {
-    const transform = d3.zoomTransform(g.node());
-    const [x, y] = transform.invert(d3.pointer(event, svg.node()));
-    console.log("Clicked coordinates:", Math.round(x), Math.round(y));
+  const transform = d3.zoomTransform(g.node());
+  const [x, y] = transform.invert(d3.pointer(event, svg.node()));
+  console.log("Clicked coordinates:", Math.round(x), Math.round(y));
 });
 
 // --- Load Data ---
 d3.csv("data.csv", d => {
-    const cleaned = {};
-    Object.keys(d).forEach(key => {
-      const cleanKey = key.trim().toLowerCase();
-      const val = d[key] ? d[key].trim() : "";
-      cleaned[cleanKey] = val;
-    });
-    return {
-      address: cleaned.address || "",
-      godsdienst: cleaned.godsdienst || "default",
-      x: +cleaned.x,
-      y: +cleaned.y,
-      godsdienstig: cleaned.godsdienstig || "nee",
-      praktiserend: cleaned.praktiserend || "nee"
-    };
+  const cleaned = {};
+  Object.keys(d).forEach(key => {
+    const cleanKey = key.trim().toLowerCase();
+    const val = d[key] ? d[key].trim() : "";
+    cleaned[cleanKey] = val;
+  });
+
+  return {
+    address: cleaned.address || "",
+    godsdienst: cleaned.godsdienst || "default",
+    x: +cleaned.x,
+    y: +cleaned.y,
+    godsdienstig: cleaned.godsdienstig || "nee",
+    praktiserend: cleaned.praktiserend || "nee"
+  };
 }).then(data => {
 
   data.forEach((d, i) => {
@@ -115,9 +131,9 @@ d3.csv("data.csv", d => {
   const controls = d3.select(".controls");
 
   const delaunay = d3.Delaunay.from(data, d => d.x, d => d.y);
-  const voronoi = delaunay.voronoi([0,0,bgWidth,bgHeight]);
+  const voronoi = delaunay.voronoi([0, 0, bgWidth, bgHeight]);
 
-  function safeRenderCell(i){
+  function safeRenderCell(i) {
     try {
       const path = voronoi.renderCell(i);
       return (!path || path.includes("NaN")) ? null : path;
@@ -128,16 +144,14 @@ d3.csv("data.csv", d => {
 
   // --- Draw Voronoi cells ---
   const cells = g.selectAll("path").data(data).join("path")
-    .attr("d",(_,i)=>safeRenderCell(i))
-    .attr("stroke","#333")
-    .attr("stroke-width",0.3)
-    .on("mousemove",(event,d)=>tooltip.style("opacity",1)
-      .style("left",(event.pageX+12)+"px")
-      .style("top",(event.pageY-10)+"px")
-      .html(`<b>${d.religion}</b><br>${d.address}<br>Religious: ${d.religious}<br>Regular: ${d.regularly}`))
-    .on("mouseout",()=>tooltip.style("opacity",0));
-
-  // --- Bolletjes verwijderd ---
+    .attr("d", (_, i) => safeRenderCell(i))
+    .attr("stroke", "#333")
+    .attr("stroke-width", 0.3)
+    .on("mousemove", (event, d) => tooltip.style("opacity", 1)
+      .style("left", (event.pageX + 12) + "px")
+      .style("top", (event.pageY - 10) + "px")
+      .html(`<b>${d.godsdienst}</b><br>${d.address}<br>Godsdienstig: ${d.godsdienstig}<br>Praktiserend: ${d.praktiserend}`))
+    .on("mouseout", () => tooltip.style("opacity", 0));
 
   function buildCheckboxes() {
     d3.selectAll(".sub-options").selectAll("label").remove();
@@ -166,9 +180,10 @@ d3.csv("data.csv", d => {
     const active = new Set(subOptionsDiv.selectAll("input:checked").nodes().map(d => d.value.trim().toLowerCase()));
     const cmap = colorMaps[currentMode];
 
-    cells.attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
-         .attr("fill", d => cmap[(d[currentMode] || "").trim().toLowerCase()] || cmap.default)
-         .attr("fill-opacity",0.5);
+    cells
+      .attr("display", d => active.has((d[currentMode] || "").trim().toLowerCase()) ? null : "none")
+      .attr("fill", d => cmap[(d[currentMode] || "").trim().toLowerCase()] || cmap.default)
+      .attr("fill-opacity", 0.5);
   }
 
   buildCheckboxes();
@@ -184,7 +199,7 @@ d3.csv("data.csv", d => {
 // --- Zoom Setup ---
 const zoom = d3.zoom()
   .scaleExtent([1, 6])
-  .translateExtent([[0,0],[bgWidth,bgHeight]])
+  .translateExtent([[0, 0], [bgWidth, bgHeight]])
   .on("zoom", event => zoomGroup.attr("transform", event.transform));
 
 svg.call(zoom);

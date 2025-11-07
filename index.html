@@ -45,7 +45,7 @@ const colorMaps = {
   praktiserend: { ja:"#1f77b4", nee:"#ff7f0e", default:"#cccccc" }
 };
 
-let currentMode = "religion";
+let currentMode = "godsdienst";
 
 // --- SVG Setup ---
 const svg = d3.select("body").append("svg").attr("viewBox",[0,0,bgWidth,bgHeight]);
@@ -97,11 +97,11 @@ d3.csv("data.csv", d => {
     });
     return {
       address: cleaned.address || "",
-      religion: cleaned.religion || "default",
+      godsdienst: cleaned.godsdienst || "default",
       x: +cleaned.x,
       y: +cleaned.y,
-      religious: cleaned.religious || "no",
-      regularly: cleaned.regularly || "no"
+      godsdienstig: cleaned.godsdienstig || "nee",
+      praktiserend: cleaned.praktiserend || "nee"
     };
 }).then(data => {
 
